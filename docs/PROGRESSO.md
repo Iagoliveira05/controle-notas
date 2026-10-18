@@ -86,6 +86,12 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## T035 — salvamento e erros
+
+- O salvamento aguarda a persistÃªncia assÃ­ncrona, evita duplo envio e informa erro ao usuÃ¡rio quando a gravaÃ§Ã£o falha.
+- `npm run lint` passou.
+- `npm run build` passou; permanece apenas o aviso conhecido de bundle acima de 500 kB.
+
 ## Atualização da etapa atual — 18/10/2026
 
 - O reconhecimento do Gemini agora aplica automaticamente os campos reconhecidos ao formulário.

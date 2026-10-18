@@ -42,7 +42,7 @@ Observação: a validação básica do formulário já está centralizada em `sr
 - [x] `T032` Integrar OCR local.
 - [x] `T033` Interpretar valores e datas brasileiras.
 - [x] `T034` Implementar revisão e edição dos dados extraídos.
-- [ ] `T035` Implementar salvamento e tratamento de erros.
+- [x] `T035` Implementar salvamento e tratamento de erros.
 - [ ] `T036` Implementar edição e exclusão.
 
 **Conclusão:** cadastro manual e por imagem funcionam sem API paga.
