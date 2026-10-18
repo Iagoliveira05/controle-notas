@@ -60,6 +60,8 @@ export function ExpenseForm({ onSave, onClose }: Props) {
   function findPaymentOption(suggestion?: string | null) {
     const value = suggestion?.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() ?? ''
     if (value.includes('pix')) return 'Pix'
+    if (value.includes('debit_card') || value.includes('debit card')) return paymentMethods[2]
+    if (value.includes('credit_card') || value.includes('credit card')) return paymentMethods[1]
     if (value.includes('debito')) return 'Cartão de débito'
     if (value.includes('credito') || value.includes('cartao')) return 'Cartão de crédito'
     if (value.includes('dinheiro') || value.includes('especie')) return 'Dinheiro'
@@ -68,6 +70,7 @@ export function ExpenseForm({ onSave, onClose }: Props) {
 
   function normalizeDate(value?: string | null) {
     if (!value) return undefined
+    if (/^\d{4}\/\d{2}\/\d{2}$/.test(value)) value = value.replaceAll('/', '-')
     if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
     const match = value.match(/^(\d{2})[-/](\d{2})[-/](\d{2,4})$/)
     if (!match) return undefined

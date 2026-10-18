@@ -86,6 +86,12 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Ajuste do reconhecimento Gemini
+
+- O prompt agora exige portugues do Brasil, rotulos locais de pagamento e data no formato `YYYY-MM-DD`.
+- A interface tambem converte `YYYY/MM/DD` e reconhece `credit_card`/`debit_card` como formas de pagamento locais.
+- `npm run lint` e `npm run build` passaram apos o ajuste.
+
 ## T035 — salvamento e erros
 
 - O salvamento aguarda a persistÃªncia assÃ­ncrona, evita duplo envio e informa erro ao usuÃ¡rio quando a gravaÃ§Ã£o falha.
