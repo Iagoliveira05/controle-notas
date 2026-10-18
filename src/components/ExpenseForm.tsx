@@ -22,7 +22,7 @@ export function ExpenseForm({ onSave, onClose }: Props) {
     setAnalysisStatus('loading')
     setAnalysisError(null)
     setResult(null)
-    try { setResult(await analyzeReceiptWithGemini(file)); setAnalysisStatus('success') }
+    try { const analysis = await analyzeReceiptWithGemini(file); setResult(analysis); applyResult(analysis); setAnalysisStatus('success') }
     catch { setAnalysisStatus('error'); setAnalysisError('Não conseguimos reconhecer esta imagem. Confira a foto e preencha os campos manualmente.') }
   }
 
@@ -33,14 +33,46 @@ export function ExpenseForm({ onSave, onClose }: Props) {
     void analyze(file)
   }
 
-  function applyResult() {
-    if (!result || !formRef.current) return
+  function applyResult(analysis = result) {
+    if (!analysis || !formRef.current) return
     const elements = formRef.current.elements
-    if (result.description) (elements.namedItem('description') as HTMLInputElement).value = result.description
-    if (result.amount !== null && result.amount !== undefined) (elements.namedItem('amount') as HTMLInputElement).value = result.amount.toFixed(2)
-    if (result.purchaseDate) (elements.namedItem('date') as HTMLInputElement).value = result.purchaseDate
-    if (result.category) (elements.namedItem('category') as HTMLSelectElement).value = result.category
-    if (result.paymentMethod) (elements.namedItem('payment') as HTMLSelectElement).value = result.paymentMethod
+    if (analysis.description) (elements.namedItem('description') as HTMLInputElement).value = analysis.description
+    if (analysis.amount !== null && analysis.amount !== undefined) (elements.namedItem('amount') as HTMLInputElement).value = analysis.amount.toFixed(2)
+    const date = normalizeDate(analysis.purchaseDate)
+    if (date) (elements.namedItem('date') as HTMLInputElement).value = date
+    const category = findOption(categories, analysis.category)
+    const payment = findPaymentOption(analysis.paymentMethod)
+    if (category) (elements.namedItem('category') as HTMLSelectElement).value = category
+    if (payment) (elements.namedItem('payment') as HTMLSelectElement).value = payment
+  }
+
+  function findOption(options: string[], suggestion?: string | null) {
+    if (!suggestion) return undefined
+    const normalized = suggestion.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    return options.find((option) => {
+      const candidate = option.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      return candidate === normalized || candidate.includes(normalized) || normalized.includes(candidate)
+    })
+  }
+
+  function findPaymentOption(suggestion?: string | null) {
+    const value = suggestion?.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() ?? ''
+    if (value.includes('pix')) return 'Pix'
+    if (value.includes('debito')) return 'Cartão de débito'
+    if (value.includes('credito') || value.includes('cartao')) return 'Cartão de crédito'
+    if (value.includes('dinheiro') || value.includes('especie')) return 'Dinheiro'
+    return findOption(paymentMethods, suggestion)
+  }
+
+  function normalizeDate(value?: string | null) {
+    if (!value) return undefined
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+    const match = value.match(/^(\d{2})[\/-](\d{2})[\/-](\d{2,4})$/)
+    if (!match) return undefined
+    const year = match[3].length === 2 ? `20${match[3]}` : match[3]
+    const date = `${year}-${match[2]}-${match[1]}`
+    const parsed = new Date(`${date}T12:00:00`)
+    return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date ? undefined : date
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
