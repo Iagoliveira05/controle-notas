@@ -108,6 +108,7 @@ Avaliar nesta ordem:
 Não usar `localStorage` como substituto silencioso da nuvem. Se houver modo de demonstração local, identificá-lo claramente.
 
 ## 9. Qualidade
+- O historico aplica filtros locais por texto, categoria, forma de pagamento e intervalo civil `YYYY-MM-DD`, evitando consultas extras ao Firestore.
 - Validar antes de persistir.
 - Tratar falhas de rede e permissão.
 - Evitar logs de dados financeiros e documentos completos.

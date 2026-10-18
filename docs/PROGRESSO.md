@@ -86,6 +86,13 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## T042/T043 — historico e filtros
+
+- O historico agora filtra por data inicial, data final, categoria, forma de pagamento e texto.
+- As comparacoes usam o formato civil `YYYY-MM-DD`, sem deslocamento de fuso.
+- A associacao de gasto a cartao ainda esta pendente; por isso o filtro por cartao nao foi marcado como concluido.
+- `npm run lint` e `npm run build` passaram; permanece apenas o aviso conhecido de bundle acima de 500 kB.
+
 ## Ajuste de layout e T041 — ciclo de fatura
 
 - Modal de cadastro corrigido para rolagem interna estável em zoom e telas pequenas, com `100dvh`, safe-area e prevenção de rolagem concorrente.

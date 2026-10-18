@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import "./App.css";
 import "./auth.css";
-import { categories } from "./data/categories";
+import { categories, paymentMethods } from "./data/categories";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";
 import { Sidebar } from "./components/Sidebar";
@@ -23,16 +23,22 @@ export default function App() {
   const [editing, setEditing] = useState<Expense | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todas");
+  const [payment, setPayment] = useState("Todas");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const filtered = useMemo(
     () =>
       items
         .filter(
           (item) =>
             (category === "Todas" || item.category === category) &&
+            (payment === "Todas" || item.payment === payment) &&
+            (!dateFrom || item.date >= dateFrom) &&
+            (!dateTo || item.date <= dateTo) &&
             item.description.toLowerCase().includes(query.toLowerCase()),
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
-    [items, category, query],
+    [items, category, payment, dateFrom, dateTo, query],
   );
   const total = filtered.reduce((sum, item) => sum + item.amount, 0);
   if (!ready || loading) return <main className="loading-page">Carregando...</main>;
@@ -98,6 +104,12 @@ export default function App() {
                   <option key={item}>{item}</option>
                 ))}
               </select>
+              <select value={payment} onChange={(event) => setPayment(event.target.value)}>
+                <option>Todas</option>
+                {paymentMethods.map((item) => <option key={item}>{item}</option>)}
+              </select>
+              <input type="date" aria-label="Data inicial" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
+              <input type="date" aria-label="Data final" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
             </div>
             <ExpenseList
               items={filtered}

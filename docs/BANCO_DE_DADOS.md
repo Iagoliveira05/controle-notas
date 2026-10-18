@@ -50,6 +50,7 @@ A aplicação usa este caminho para usuários autenticados. O campo de interface
 Categorias iniciais podem ser fixas no código para reduzir complexidade. Se forem personalizáveis, armazenar em `users/{userId}/categories/{categoryId}`.
 
 ## 4. Valores e datas
+- O intervalo do historico compara strings `YYYY-MM-DD`, preservando a data civil sem conversao de fuso.
 
 - Converter `R$ 12,34` em `1234` centavos.
 - Evitar somas monetárias com ponto flutuante.

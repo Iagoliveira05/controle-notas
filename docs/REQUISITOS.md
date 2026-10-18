@@ -126,6 +126,7 @@ Categorias iniciais: Alimentação, Mercado, Transporte, Combustível, Saúde, E
 - [ ] Testes, verificação de tipos e build foram executados e os resultados reais registrados em `PROGRESSO.md`.
 
 ## 7. Fora do escopo inicial
+- O historico agora oferece filtro local por periodo, categoria, pagamento e texto; filtros por cartao aguardam a associacao de gastos a cartoes.
 
 - Integração bancária.
 - Importação automática de transações bancárias.
