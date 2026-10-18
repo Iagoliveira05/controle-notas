@@ -1,9 +1,122 @@
-import { useMemo, useState } from 'react'
-import './App.css'
-import { categories } from './data/categories'
-import { ExpenseForm } from './components/ExpenseForm'
-import { ExpenseList } from './components/ExpenseList'
-import { Sidebar } from './components/Sidebar'
-import { useExpenses } from './hooks/useExpenses'
-import { formatCurrency } from './utils/format'
-export default function App() { const { items, add, remove } = useExpenses(); const [tab, setTab] = useState('dashboard'); const [open, setOpen] = useState(false); const [query, setQuery] = useState(''); const [category, setCategory] = useState('Todas'); const filtered = useMemo(() => items.filter(item => (category === 'Todas' || item.category === category) && item.description.toLowerCase().includes(query.toLowerCase())).sort((a, b) => b.date.localeCompare(a.date)), [items, category, query]); const total = filtered.reduce((sum, item) => sum + item.amount, 0); return <div className="app"><Sidebar tab={tab} onTabChange={setTab} /><main><header><div><p>RESUMO FINANCEIRO</p><h1>{tab === 'dashboard' ? 'Olá, vamos organizar?' : tab === 'history' ? 'Histórico de gastos' : 'Seus cartões'}</h1></div><button className="primary" onClick={() => setOpen(true)}>＋ Novo gasto</button></header>{tab === 'dashboard' && <><section className="hero"><p>RESUMO DO MÊS</p><h2>{formatCurrency(total)}</h2><span>total neste mês</span></section><div className="stats"><div><small>Gastos registrados</small><b>{items.length}</b></div><div><small>Ticket médio</small><b>{formatCurrency(items.length ? total / items.length : 0)}</b></div><div><small>Categoria recente</small><b>{filtered[0]?.category || '—'}</b></div></div></>}{tab !== 'cards' && <><div className="filters"><input placeholder="Buscar estabelecimento..." value={query} onChange={event => setQuery(event.target.value)} /><select value={category} onChange={event => setCategory(event.target.value)}><option>Todas</option>{categories.map(item => <option key={item}>{item}</option>)}</select></div><ExpenseList items={filtered} tab={tab} onRemove={remove} onOpenForm={() => setOpen(true)} /></>}{tab === 'cards' && <section className="panel empty"><b>▣</b><h3>Cartões</h3><p>O cadastro de cartões será conectado ao ciclo de faturas na próxima etapa.</p></section>}<footer>Conta Certa · <span>Modo local de demonstração</span></footer></main>{open && <ExpenseForm onSave={add} onClose={() => setOpen(false)} />}</div> }
+import { useMemo, useState } from "react";
+import "./App.css";
+import "./auth.css";
+import { categories } from "./data/categories";
+import { ExpenseForm } from "./components/ExpenseForm";
+import { ExpenseList } from "./components/ExpenseList";
+import { Sidebar } from "./components/Sidebar";
+import { useExpenses } from "./hooks/useExpenses";
+import { formatCurrency } from "./utils/format";
+import { firebaseConfigured } from "./lib/firebase";
+import { useAuth } from "./hooks/useAuth";
+import { AuthForm } from "./components/AuthForm";
+import { logOut } from "./lib/auth";
+export default function App() {
+  const { user, ready } = useAuth();
+  const { items, add, remove, loading, error } = useExpenses(user, firebaseConfigured);
+  const [tab, setTab] = useState("dashboard");
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("Todas");
+  const filtered = useMemo(
+    () =>
+      items
+        .filter(
+          (item) =>
+            (category === "Todas" || item.category === category) &&
+            item.description.toLowerCase().includes(query.toLowerCase()),
+        )
+        .sort((a, b) => b.date.localeCompare(a.date)),
+    [items, category, query],
+  );
+  const total = filtered.reduce((sum, item) => sum + item.amount, 0);
+  if (!ready || loading) return <main className="loading-page">Carregando...</main>;
+  if (firebaseConfigured && !user) return <AuthForm />;
+  return (
+    <div className="app">
+      <Sidebar tab={tab} onTabChange={setTab} />
+      <main>
+        <header>
+          <div>
+            <p>RESUMO FINANCEIRO</p>
+            <h1>
+              {tab === "dashboard"
+                ? "Olá, vamos organizar?"
+                : tab === "history"
+                  ? "Histórico de gastos"
+                  : "Seus cartões"}
+            </h1>
+          </div>
+          <button className="primary" onClick={() => setOpen(true)}>
+            ＋ Novo gasto
+          </button>
+          {user && <button type="button" onClick={() => void logOut()}>Sair</button>}
+        </header>
+        {error && <p className="form-error" role="alert">{error}</p>}
+        {tab === "dashboard" && (
+          <>
+            <section className="hero">
+              <p>RESUMO DO MÊS</p>
+              <h2>{formatCurrency(total)}</h2>
+              <span>total neste mês</span>
+            </section>
+            <div className="stats">
+              <div>
+                <small>Gastos registrados</small>
+                <b>{items.length}</b>
+              </div>
+              <div>
+                <small>Ticket médio</small>
+                <b>{formatCurrency(items.length ? total / items.length : 0)}</b>
+              </div>
+              <div>
+                <small>Categoria recente</small>
+                <b>{filtered[0]?.category || "—"}</b>
+              </div>
+            </div>
+          </>
+        )}
+        {tab !== "cards" && (
+          <>
+            <div className="filters">
+              <input
+                placeholder="Buscar estabelecimento..."
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+              >
+                <option>Todas</option>
+                {categories.map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
+              </select>
+            </div>
+            <ExpenseList
+              items={filtered}
+              tab={tab}
+              onRemove={remove}
+              onOpenForm={() => setOpen(true)}
+            />
+          </>
+        )}
+        {tab === "cards" && (
+          <section className="panel empty">
+            <b>▣</b>
+            <h3>Cartões</h3>
+            <p>
+              O cadastro de cartões será conectado ao ciclo de faturas na
+              próxima etapa.
+            </p>
+          </section>
+        )}
+        <footer>
+          Conta Certa · <span>{firebaseConfigured ? "Firebase configurado" : "Modo local: Firebase não configurado"}</span>
+        </footer>
+      </main>
+      {open && <ExpenseForm onSave={add} onClose={() => setOpen(false)} />}
+    </div>
+  );
+}
