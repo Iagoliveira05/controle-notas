@@ -86,6 +86,12 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Ajuste de layout e T041 — ciclo de fatura
+
+- Modal de cadastro corrigido para rolagem interna estável em zoom e telas pequenas, com `100dvh`, safe-area e prevenção de rolagem concorrente.
+- Criada `getBillingCycle` em `src/utils/billingCycle.ts`, centralizando início, fechamento e vencimento do ciclo, inclusive meses curtos e virada de ano.
+- `npm run lint` e `npm run build` passaram; permanece apenas o aviso conhecido de bundle acima de 500 kB.
+
 ## Fase 4 — cartões: T040
 
 - Cadastro, edição e exclusão de cartões implementados.
