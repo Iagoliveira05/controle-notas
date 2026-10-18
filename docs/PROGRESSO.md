@@ -4,9 +4,9 @@
 
 ## Estado atual
 
-O projeto está no início da Fase 2 (Firebase), com a fundação da Fase 1 ainda parcialmente aberta. A aplicação já possui interface responsiva, navegação, cadastro manual, filtros e exclusão local. A seleção de imagem/câmera foi adicionada nesta etapa e exibe uma prévia local.
+O projeto está na transição da Fase 2 para a Fase 3. A aplicação possui interface responsiva, cadastro manual, filtros, exclusão local, seleção de imagem/câmera e OCR local com texto revisável.
 
-O SDK Firebase, o arquivo `.env.example` e as regras Firestore foram adicionados. As configurações Web foram aplicadas em `.env.local` e nas variáveis de produção da Vercel. Autenticação por e-mail/senha e persistência Firestore por usuário foram implementadas; a publicação das regras no projeto Firebase ainda depende do CLI/autorização do ambiente.
+O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usuário e regras publicadas foram implementados. O OCR local usa Tesseract.js; interpretação automática de campos ainda não foi implementada.
 
 ## Resumo por fase
 
@@ -14,8 +14,8 @@ O SDK Firebase, o arquivo `.env.example` e as regras Firestore foram adicionados
 | -------------------------- | -------------------- | ------------------------------------------------------------------------------------------------ |
 | 0. Inspeção e documentação | Concluída            | Repositório, stack e documentos revisados.                                                       |
 | 1. Fundação                | Em andamento         | Layout, navegação e validação básica prontas; falta concluir testes e modelo em centavos.        |
-| 2. Firebase e segurança    | Em andamento         | SDK, variáveis, aviso de configuração e regras versionadas; falta autenticação, persistência e teste das regras. |
-| 3. Cadastro e OCR          | Em andamento inicial | Cadastro manual existe; imagem pode ser escolhida/capturada e visualizada; OCR ainda não existe. |
+| 2. Firebase e segurança    | Quase concluída      | Login, persistência e regras publicadas; falta validar fluxo completo com conta real. |
+| 3. Cadastro e OCR          | Em andamento          | Imagem, prévia e OCR local implementados; faltam interpretação e revisão estruturada dos campos. |
 | 4. Cartões e períodos      | Não iniciada         | Tela de cartões é apenas informativa.                                                            |
 | 5. Dashboard               | Parcial              | Totais básicos existem; indicadores completos ainda não.                                         |
 | 6. Testes e qualidade      | Parcial              | Lint, TypeScript e build passam; não há testes automatizados.                                    |
@@ -34,14 +34,15 @@ O SDK Firebase, o arquivo `.env.example` e as regras Firestore foram adicionados
 - Configuração Web aplicada localmente e na produção Vercel; nenhum segredo administrativo foi usado.
 - Login e cadastro por e-mail/senha em `src/components/AuthForm.tsx`.
 - Gastos autenticados persistidos em `users/{uid}/expenses`, com `amountCents`.
+- OCR local com Tesseract.js em `src/services/ocrService.ts`, com progresso e texto revisável.
 
 ## Tarefas pendentes principais
 
 - Configurar Firebase Authentication e Firestore com variáveis `VITE_*`.
-- Publicar `firestore.rules` e habilitar/verificar o provedor E-mail/Senha no console Firebase.
+- Habilitar/verificar o provedor E-mail/Senha e testar login/gravação com conta real.
 - Criar regras Firestore que isolem os dados por usuário.
 - Migrar valores para centavos inteiros.
-- Integrar OCR local, preferencialmente Tesseract.js.
+- Interpretar valores e datas brasileiras sem assumir que o maior número é o total.
 - Revisar e salvar os campos extraídos pelo OCR.
 - Implementar cartões, ciclos de fatura, edição de gastos e filtros completos.
 - Criar testes unitários e de interface.
@@ -59,6 +60,7 @@ O SDK Firebase, o arquivo `.env.example` e as regras Firestore foram adicionados
 | `npx vercel --prod` | Nova versão com variáveis Firebase de produção publicada; alias preservado. |
 | `npm run lint` | Passou após a implementação de autenticação e persistência. |
 | `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |
+| `npx firebase-tools deploy --only firestore:rules --project ontrole-db60e` | Regras compiladas e publicadas com sucesso em `cloud.firestore`. |
 
 ## Publicação
 

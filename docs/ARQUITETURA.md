@@ -79,12 +79,12 @@ A estrutura atual ainda é menor: `components/`, `hooks/`, `data/`, `types/` e `
 Se o OCR falhar, permitir cadastro manual.
 
 ## 6. Estratégia de OCR
-- Executar OCR no navegador com Tesseract.js ou alternativa equivalente.
+- Executar OCR no navegador com Tesseract.js ou alternativa equivalente. Implementado em `src/services/ocrService.ts` com idioma português e progresso.
 - Não enviar imagens ou texto para APIs externas.
 - Interpretar valores brasileiros como `1.234,56`.
 - Distinguir total, subtotal, desconto, troco e valor recebido.
 - Não presumir que o maior valor numérico é o total.
-- Sinalizar campos incertos.
+- Sinalizar campos incertos. O texto reconhecido é apresentado para revisão e não preenche campos automaticamente.
 - Testar com comprovantes diversos e documentar limitações.
 
 ## 7. Firebase

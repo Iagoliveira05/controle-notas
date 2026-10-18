@@ -39,7 +39,7 @@ Observação: a validação básica do formulário já está centralizada em `sr
 ## Fase 3 — Cadastro e OCR
 - [x] `T030` Implementar cadastro manual.
 - [x] `T031` Implementar seleção e prévia de imagem.
-- [ ] `T032` Integrar OCR local.
+- [x] `T032` Integrar OCR local.
 - [ ] `T033` Interpretar valores e datas brasileiras.
 - [ ] `T034` Implementar revisão e edição dos dados extraídos.
 - [ ] `T035` Implementar salvamento e tratamento de erros.
