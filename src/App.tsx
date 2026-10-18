@@ -12,9 +12,12 @@ import { useAuth } from "./hooks/useAuth";
 import { AuthForm } from "./components/AuthForm";
 import { logOut } from "./lib/auth";
 import type { Expense } from "./types/expense";
+import { useCards } from "./hooks/useCards";
+import { CardsPanel } from "./components/CardsPanel";
 export default function App() {
   const { user, ready } = useAuth();
   const { items, add, update, remove, loading, error } = useExpenses(user, firebaseConfigured);
+  const cards = useCards(user, firebaseConfigured);
   const [tab, setTab] = useState("dashboard");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
@@ -105,7 +108,7 @@ export default function App() {
             />
           </>
         )}
-        {tab === "cards" && (
+        {tab === "legacy-cards" && (
           <section className="panel empty">
             <b>▣</b>
             <h3>Cartões</h3>
@@ -115,6 +118,7 @@ export default function App() {
             </p>
           </section>
         )}
+        {tab === "cards" && <CardsPanel items={cards.items} onAdd={cards.add} onUpdate={cards.update} onRemove={cards.remove} />}
         <footer>
           Conta Certa · <span>{firebaseConfigured ? "Firebase configurado" : "Modo local: Firebase não configurado"}</span>
         </footer>

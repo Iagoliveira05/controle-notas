@@ -86,6 +86,13 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Fase 4 — cartões: T040
+
+- Cadastro, edição e exclusão de cartões implementados.
+- Campos: nome, instituição, dia de fechamento e dia de vencimento.
+- Persistência em `users/{uid}/cards` no Firestore; modo local usa `localStorage` identificado pela aplicação.
+- `npm run lint` e `npm run build` passaram; o build mantém apenas o aviso conhecido de bundle acima de 500 kB.
+
 ## T036 — edição e exclusão
 
 - A lista agora oferece edição e exclusão com confirmação.
