@@ -4,6 +4,7 @@ import type { Expense } from '../types/expense'
 import { validateExpense } from '../utils/validators'
 import { analyzeReceiptWithGemini, type GeminiReceiptResult } from '../services/geminiService'
 import './expense-form.css'
+import './expense-form-spacing.css'
 
 type Props = { onSave: (expense: Omit<Expense, 'id'>) => void; onClose: () => void }
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error'
