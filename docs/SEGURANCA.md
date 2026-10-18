@@ -20,6 +20,7 @@ Proteger os registros financeiros e evitar que a senha inicial seja confundida c
 - Criar e versionar regras do Firestore.
 - Se Storage for usado, criar regras específicas e confirmar a viabilidade gratuita antes.
 - Não publicar regras permissivas como `allow read, write: if true`.
+- A análise Gemini é opcional e envia a imagem ao Google via Firebase AI Logic somente após ação explícita. App Check deve ser configurado e aplicado no console antes da publicação pública.
 
 ## 4. Configuração
 - Usar `.env.local` para configuração local e manter o arquivo fora do Git.

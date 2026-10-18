@@ -113,7 +113,8 @@ Categorias iniciais: Alimentação, Mercado, Transporte, Combustível, Saúde, E
 - [ ] Cadastro manual de gastos funciona.
 - [x] Imagem pode ser selecionada e visualizada.
 - [x] OCR é executado localmente e não depende de API paga.
-- [ ] Dados extraídos podem ser revisados e corrigidos.
+- [x] Dados extraídos podem ser revisados e corrigidos.
+- [x] Análise Gemini opcional retorna sugestões revisáveis sem salvar automaticamente.
 - [ ] Gastos podem ser editados e excluídos.
 - [ ] Totais refletem as alterações.
 - [ ] Histórico filtra corretamente por intervalo.

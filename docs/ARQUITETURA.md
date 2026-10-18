@@ -62,7 +62,7 @@ A estrutura atual ainda é menor: `components/`, `hooks/`, `data/`, `types/` e `
 
 - **Interface:** páginas, componentes, formulários, carregamento, erros e acessibilidade.
 - **Domínio:** tipos, validações, formatação e cálculo determinístico das faturas.
-- **OCR:** recebe imagem local, executa leitura e sugere campos; não salva automaticamente.
+- **OCR/IA:** recebe imagem local somente após ação explícita, usa Tesseract local ou Firebase AI Logic/Gemini, valida a resposta e sugere campos; não salva automaticamente.
 - **Serviços de aplicação:** coordenam validação, criação, edição, exclusão e consultas.
 - **Persistência:** encapsula chamadas ao Firebase; evitar consultas Firestore espalhadas pelos componentes.
 
@@ -92,6 +92,7 @@ Se o OCR falhar, permitir cadastro manual.
 - Ler configuração do cliente por variáveis `VITE_*`.
 - Configuração pública do Firebase não substitui regras de segurança.
 - Nunca incluir service-account keys ou segredos administrativos no frontend.
+- A integração Gemini usa Firebase AI Logic com Gemini Developer API; não há chave Gemini no código. Firebase App Check deve permanecer ativo em produção.
 - Isolar dados por usuário autenticado.
 - Se faltar configuração, mostrar mensagem explícita.
 - Considerar Firebase Emulator Suite para testes locais.

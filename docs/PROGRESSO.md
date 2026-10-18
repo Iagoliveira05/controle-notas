@@ -48,6 +48,7 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Interpretar valores e datas brasileiras sem assumir que o maior número é o total.
 - Testar o interpretador com comprovantes reais e variados; a heurística permanece sujeita a revisão manual.
 - Ajustar o OCR para layouts específicos após coletar exemplos reais de comprovantes, sem enviar imagens para serviços externos.
+- Confirmar App Check ativo no console e testar Gemini com comprovantes reais, quotas e imagens ilegíveis.
 - Revisar e salvar os campos extraídos pelo OCR.
 - Implementar cartões, ciclos de fatura, edição de gastos e filtros completos.
 - Criar testes unitários e de interface.
@@ -68,6 +69,8 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 | `npm run lint` | Passou após o pré-processamento de imagem e melhoria visual do formulário. |
 | `npx firebase-tools deploy --only firestore:rules --project ontrole-db60e` | Regras compiladas e publicadas com sucesso em `cloud.firestore`. |
 | `npm run lint` | Passou após o interpretador OCR e revisão de sugestões. |
+| `npm run lint` | Passou após a integração Firebase AI Logic/Gemini. |
+| `npm run build` | Passou; bundle inclui `firebase/ai` e emitiu aviso de chunk acima de 500 kB. |
 | `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |
 
 ## Publicação
