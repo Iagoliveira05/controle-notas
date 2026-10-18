@@ -2,51 +2,44 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { categories, paymentMethods } from '../data/categories'
 import type { Expense } from '../types/expense'
 import { validateExpense } from '../utils/validators'
-import { recognizeReceipt } from '../services/ocrService'
-import { parseReceiptText, type ReceiptSuggestions } from '../services/receiptParser'
 import { analyzeReceiptWithGemini, type GeminiReceiptResult } from '../services/geminiService'
 import './expense-form.css'
 
 type Props = { onSave: (expense: Omit<Expense, 'id'>) => void; onClose: () => void }
+type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export function ExpenseForm({ onSave, onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [ocrText, setOcrText] = useState('')
-  const [ocrStatus, setOcrStatus] = useState<'idle' | 'running' | 'error'>('idle')
-  const [ocrProgress, setOcrProgress] = useState(0)
-  const [suggestions, setSuggestions] = useState<ReceiptSuggestions>({})
-  const [geminiResult, setGeminiResult] = useState<GeminiReceiptResult | null>(null)
-  const [geminiStatus, setGeminiStatus] = useState<'idle' | 'running' | 'error'>('idle')
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>('idle')
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
+  const [result, setResult] = useState<GeminiReceiptResult | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => () => { if (imageUrl) URL.revokeObjectURL(imageUrl) }, [imageUrl])
+
+  async function analyze(file: File) {
+    setAnalysisStatus('loading')
+    setAnalysisError(null)
+    setResult(null)
+    try { setResult(await analyzeReceiptWithGemini(file)); setAnalysisStatus('success') }
+    catch { setAnalysisStatus('error'); setAnalysisError('Não conseguimos reconhecer esta imagem. Confira a foto e preencha os campos manualmente.') }
+  }
 
   function selectImage(file: File | undefined) {
     if (!file) return
     if (!file.type.startsWith('image/')) { window.alert('Selecione um arquivo de imagem válido.'); return }
     setImageUrl((current) => { if (current) URL.revokeObjectURL(current); return URL.createObjectURL(file) })
-    setImageFile(file); setOcrText(''); setSuggestions({}); setGeminiResult(null); setOcrStatus('idle'); setGeminiStatus('idle')
+    void analyze(file)
   }
 
-  async function runOcr() {
-    if (!imageFile) return
-    setOcrStatus('running'); setOcrProgress(0)
-    try { const text = await recognizeReceipt(imageFile, setOcrProgress); setOcrText(text); setSuggestions(parseReceiptText(text)); setOcrStatus('idle') } catch { setOcrStatus('error') }
-  }
-
-  async function runGemini() {
-    if (!imageFile) return
-    setGeminiStatus('running')
-    try { const result = await analyzeReceiptWithGemini(imageFile); setGeminiResult(result); setSuggestions({ description: result.description ?? undefined, amount: result.amount ?? undefined, date: result.purchaseDate ?? undefined }); setGeminiStatus('idle') } catch { setGeminiStatus('error') }
-  }
-
-  function applySuggestions() {
-    const form = formRef.current
-    if (!form) return
-    if (suggestions.description) (form.elements.namedItem('description') as HTMLInputElement).value = suggestions.description
-    if (suggestions.amount) (form.elements.namedItem('amount') as HTMLInputElement).value = suggestions.amount.toFixed(2)
-    if (suggestions.date) (form.elements.namedItem('date') as HTMLInputElement).value = suggestions.date
+  function applyResult() {
+    if (!result || !formRef.current) return
+    const elements = formRef.current.elements
+    if (result.description) (elements.namedItem('description') as HTMLInputElement).value = result.description
+    if (result.amount !== null && result.amount !== undefined) (elements.namedItem('amount') as HTMLInputElement).value = result.amount.toFixed(2)
+    if (result.purchaseDate) (elements.namedItem('date') as HTMLInputElement).value = result.purchaseDate
+    if (result.category) (elements.namedItem('category') as HTMLSelectElement).value = result.category
+    if (result.paymentMethod) (elements.namedItem('payment') as HTMLSelectElement).value = result.paymentMethod
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -58,5 +51,8 @@ export function ExpenseForm({ onSave, onClose }: Props) {
     onSave(draft); onClose()
   }
 
-  return <div className="back"><form ref={formRef} onSubmit={submit}><h2>Novo gasto</h2><label>Foto do comprovante <span className="hint">opcional</span><input name="receipt" type="file" accept="image/*" capture="environment" onChange={(event) => selectImage(event.target.files?.[0])} /></label>{imageUrl && <div className="receipt-preview"><img src={imageUrl} alt="Prévia do comprovante selecionado" /><button type="button" onClick={() => setImageUrl(null)}>Remover foto</button><button type="button" onClick={() => void runOcr()} disabled={ocrStatus === 'running'}>{ocrStatus === 'running' ? `OCR ${Math.round(ocrProgress * 100)}%` : 'Ler localmente'}</button><button type="button" onClick={() => void runGemini()} disabled={geminiStatus === 'running'}>{geminiStatus === 'running' ? 'Analisando...' : 'Analisar com Gemini'}</button></div>}{ocrStatus === 'error' && <p className="form-error">OCR local não conseguiu ler esta imagem.</p>}{geminiStatus === 'error' && <p className="form-error">Gemini não disponível ou não conseguiu interpretar a imagem. Tente o OCR local.</p>}{ocrText && <label>Texto reconhecido — revise<textarea value={ocrText} onChange={(event) => setOcrText(event.target.value)} rows={5} /></label>}{geminiResult?.warnings.map((warning) => <p className="form-error" key={warning}>Atenção: {warning}</p>)}{(suggestions.description || suggestions.amount || suggestions.date) && <div className="suggestions"><p>Sugestões encontradas — confira antes de aplicar:</p><ul><li>Estabelecimento: {suggestions.description ?? 'não identificado'}</li><li>Valor: {suggestions.amount ? suggestions.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'não identificado'}</li><li>Data: {suggestions.date ?? 'não identificada'}</li></ul><button type="button" onClick={applySuggestions}>Aplicar sugestões ao formulário</button></div>}<label>Descrição<input name="description" required /></label><div className="two"><label>Valor<input name="amount" type="number" step=".01" min=".01" required /></label><label>Data<input name="date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></label></div><label>Categoria<select name="category">{categories.map(category => <option key={category}>{category}</option>)}</select></label><label>Pagamento<select name="payment">{paymentMethods.map(method => <option key={method}>{method}</option>)}</select></label><p className="form-note">O Gemini envia a imagem ao Google através do Firebase AI Logic. Use apenas se concordar com esse envio. A resposta é uma sugestão revisável.</p><button className="primary">Salvar gasto</button><button type="button" onClick={onClose}>Cancelar</button></form></div>
+  const recognized = result ? [{ label: 'Estabelecimento', value: result.description }, { label: 'Valor total', value: result.amount === null || result.amount === undefined ? null : result.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }, { label: 'Data da compra', value: result.purchaseDate }, { label: 'Categoria', value: result.category }, { label: 'Pagamento', value: result.paymentMethod }] : []
+  const missing = recognized.filter((field) => !field.value).map((field) => field.label)
+
+  return <div className="back"><form ref={formRef} onSubmit={submit}><div className="form-heading"><div><span className="eyebrow">NOVO LANÇAMENTO</span><h2>Registrar compra</h2><p>Tire uma foto e nós analisaremos o comprovante.</p></div><button type="button" className="close-button" onClick={onClose} aria-label="Fechar">×</button></div><label className="upload-area"><span className="upload-icon">＋</span><strong>{imageUrl ? 'Trocar comprovante' : 'Tirar foto ou escolher da galeria'}</strong><small>JPG, PNG ou HEIC · a análise começa automaticamente</small><input name="receipt" type="file" accept="image/*" capture="environment" onChange={(event) => selectImage(event.target.files?.[0])} /></label>{imageUrl && <div className="receipt-preview"><img src={imageUrl} alt="Prévia do comprovante" />{analysisStatus === 'loading' && <div className="analysis-loading"><span className="spinner" /><strong>Analisando comprovante...</strong><small>Identificando valores, data e estabelecimento</small></div>}</div>}{analysisStatus === 'error' && <div className="analysis-error" role="alert"><strong>Não foi possível reconhecer</strong><span>{analysisError}</span><small>Você pode preencher os campos manualmente ou escolher outra foto.</small></div>}{analysisStatus === 'success' && result && <section className="recognition-card"><div className="recognition-header"><div><span className="eyebrow">ANÁLISE CONCLUÍDA</span><h3>Confira o que encontramos</h3></div><span className="check">✓</span></div><div className="recognized-grid">{recognized.map((field) => <div className={field.value ? 'recognized-field' : 'recognized-field missing'} key={field.label}><small>{field.label}</small><strong>{field.value || 'Não identificado'}</strong></div>)}</div>{missing.length > 0 && <p className="missing-note">Não encontramos: {missing.join(', ')}. Preencha ou corrija abaixo.</p>}{result.warnings.map((warning) => <p className="warning-note" key={warning}>{warning}</p>)}<button type="button" className="suggestion-button" onClick={applyResult}>Usar sugestões no formulário</button></section>}<div className="manual-section"><div className="section-title"><span>Dados da compra</span><small>Você pode editar tudo antes de salvar</small></div><label>Estabelecimento ou descrição<input name="description" placeholder="Ex.: Mercado Central" required /></label><div className="two"><label>Valor total<input name="amount" type="number" step=".01" min=".01" placeholder="0,00" required /></label><label>Data da compra<input name="date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></label></div><div className="two"><label>Categoria<select name="category">{categories.map(category => <option key={category}>{category}</option>)}</select></label><label>Forma de pagamento<select name="payment">{paymentMethods.map(method => <option key={method}>{method}</option>)}</select></label></div></div><p className="privacy-note">A imagem é enviada ao Gemini somente para esta análise e não é salva automaticamente.</p><div className="form-actions"><button type="button" onClick={onClose}>Cancelar</button><button className="primary" disabled={analysisStatus === 'loading'}>Salvar compra</button></div></form></div>
 }

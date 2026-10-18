@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-O projeto está na transição da Fase 2 para a Fase 3. A aplicação possui interface responsiva, cadastro manual, filtros, exclusão local, seleção de imagem/câmera e OCR local com pré-processamento e texto revisável.
+O projeto está na Fase 3. A aplicação possui interface responsiva refatorada, cadastro manual, filtros, exclusão local, seleção de imagem/câmera e análise automática com Gemini via Firebase AI Logic.
 
 O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usuário e regras publicadas foram implementados. O OCR local usa Tesseract.js; interpretação automática de campos ainda não foi implementada.
 
@@ -49,6 +49,7 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Testar o interpretador com comprovantes reais e variados; a heurística permanece sujeita a revisão manual.
 - Ajustar o OCR para layouts específicos após coletar exemplos reais de comprovantes, sem enviar imagens para serviços externos.
 - Confirmar App Check ativo no console e testar Gemini com comprovantes reais, quotas e imagens ilegíveis.
+- Validar visualmente o novo fluxo em celular e desktop com conta Firebase real.
 - Revisar e salvar os campos extraídos pelo OCR.
 - Implementar cartões, ciclos de fatura, edição de gastos e filtros completos.
 - Criar testes unitários e de interface.

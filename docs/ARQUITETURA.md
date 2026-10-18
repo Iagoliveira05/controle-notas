@@ -68,10 +68,10 @@ A estrutura atual ainda é menor: `components/`, `hooks/`, `data/`, `types/` e `
 
 ## 5. Fluxo por imagem
 1. Usuário seleciona ou captura imagem.
-2. Aplicação mostra a prévia local (implementado; a imagem é descartada ao fechar o formulário).
-3. OCR local processa a imagem.
-4. Interpretador sugere estabelecimento, data e total.
-5. Usuário revisa e corrige os campos.
+2. Aplicação mostra a prévia local e inicia automaticamente a análise Gemini.
+3. A interface mostra carregamento, sucesso ou falha.
+4. Gemini sugere estabelecimento, data, total, categoria e pagamento quando identificáveis.
+5. A interface lista campos encontrados e ausentes; usuário revisa e corrige os campos.
 6. Aplicação valida os dados.
 7. Registro é persistido.
 8. Histórico e indicadores são atualizados.

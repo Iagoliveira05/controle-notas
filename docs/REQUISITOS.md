@@ -115,6 +115,7 @@ Categorias iniciais: Alimentação, Mercado, Transporte, Combustível, Saúde, E
 - [x] OCR é executado localmente e não depende de API paga.
 - [x] Dados extraídos podem ser revisados e corrigidos.
 - [x] Análise Gemini opcional retorna sugestões revisáveis sem salvar automaticamente.
+- [x] Ao selecionar/capturar imagem, a análise Gemini inicia automaticamente e informa carregamento, sucesso ou falha.
 - [ ] Gastos podem ser editados e excluídos.
 - [ ] Totais refletem as alterações.
 - [ ] Histórico filtra corretamente por intervalo.
