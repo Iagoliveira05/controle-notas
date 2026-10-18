@@ -86,6 +86,13 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Correção adicional de layout — 18/10/2026
+
+- Ajustado o layout para não exceder a largura real do viewport, inclusive com zoom.
+- Filtros reorganizados em grade no desktop e em uma coluna apenas em telas estreitas.
+- Linhas de gastos agora permitem quebra controlada de texto e ações sem overflow horizontal.
+- `npm run lint` e `npm run build` passaram após o ajuste.
+
 ## Correção de layout e planejamento
 
 - Corrigido overflow horizontal causado pela combinação de sidebar fixa e conteúdo flexível.
