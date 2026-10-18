@@ -6,10 +6,10 @@ import { analyzeReceiptWithGemini, type GeminiReceiptResult } from '../services/
 import './expense-form.css'
 import './expense-form-spacing.css'
 
-type Props = { onSave: (expense: Omit<Expense, 'id'>) => Promise<void>; onClose: () => void }
+type Props = { initialExpense?: Expense; onSave: (expense: Omit<Expense, 'id'>) => Promise<void>; onClose: () => void }
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error'
 
-export function ExpenseForm({ onSave, onClose }: Props) {
+export function ExpenseForm({ initialExpense, onSave, onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>('idle')
   const [analysisError, setAnalysisError] = useState<string | null>(null)
@@ -18,6 +18,16 @@ export function ExpenseForm({ onSave, onClose }: Props) {
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => () => { if (imageUrl) URL.revokeObjectURL(imageUrl) }, [imageUrl])
+
+  useEffect(() => {
+    if (!initialExpense || !formRef.current) return
+    const elements = formRef.current.elements
+    ;(elements.namedItem('description') as HTMLInputElement).value = initialExpense.description
+    ;(elements.namedItem('amount') as HTMLInputElement).value = initialExpense.amount.toFixed(2)
+    ;(elements.namedItem('date') as HTMLInputElement).value = initialExpense.date
+    ;(elements.namedItem('category') as HTMLSelectElement).value = initialExpense.category
+    ;(elements.namedItem('payment') as HTMLSelectElement).value = initialExpense.payment
+  }, [initialExpense])
 
   async function analyze(file: File) {
     setAnalysisStatus('loading')

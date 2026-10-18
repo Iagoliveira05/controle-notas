@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { User } from 'firebase/auth'
 import type { Expense } from '../types/expense'
-import { createExpense, listExpenses, removeExpense } from '../services/expenseService'
+import { createExpense, listExpenses, removeExpense, updateExpense } from '../services/expenseService'
 
 const KEY = 'expenses'
 
@@ -42,5 +42,18 @@ export function useExpenses(user: User | null, firebaseConfigured: boolean) {
     localStorage.setItem(KEY, JSON.stringify(next))
   }
 
-  return { items, add, remove, loading, error }
+  async function update(expense: Expense) {
+    setError(null)
+    if (firebaseConfigured && user) {
+      await updateExpense(user, expense)
+    } else {
+      const next = items.map((item) => item.id === expense.id ? expense : item)
+      setItems(next)
+      localStorage.setItem(KEY, JSON.stringify(next))
+      return
+    }
+    setItems((current) => current.map((item) => item.id === expense.id ? expense : item))
+  }
+
+  return { items, add, update, remove, loading, error }
 }

@@ -11,11 +11,13 @@ import { firebaseConfigured } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
 import { AuthForm } from "./components/AuthForm";
 import { logOut } from "./lib/auth";
+import type { Expense } from "./types/expense";
 export default function App() {
   const { user, ready } = useAuth();
-  const { items, add, remove, loading, error } = useExpenses(user, firebaseConfigured);
+  const { items, add, update, remove, loading, error } = useExpenses(user, firebaseConfigured);
   const [tab, setTab] = useState("dashboard");
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Expense | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todas");
   const filtered = useMemo(
@@ -98,7 +100,8 @@ export default function App() {
               items={filtered}
               tab={tab}
               onRemove={remove}
-              onOpenForm={() => setOpen(true)}
+              onEdit={(expense) => { setEditing(expense); setOpen(true) }}
+              onOpenForm={() => { setEditing(null); setOpen(true) }}
             />
           </>
         )}
@@ -116,7 +119,7 @@ export default function App() {
           Conta Certa · <span>{firebaseConfigured ? "Firebase configurado" : "Modo local: Firebase não configurado"}</span>
         </footer>
       </main>
-      {open && <ExpenseForm onSave={add} onClose={() => setOpen(false)} />}
+      {open && <ExpenseForm initialExpense={editing ?? undefined} onSave={async (expense) => { if (editing) await update({ ...expense, id: editing.id }); else await add(expense) }} onClose={() => { setOpen(false); setEditing(null) }} />}
     </div>
   );
 }

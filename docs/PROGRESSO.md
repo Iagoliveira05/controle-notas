@@ -86,6 +86,13 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## T036 — edição e exclusão
+
+- A lista agora oferece edição e exclusão com confirmação.
+- A edição atualiza Firestore com `updatedAt` quando autenticado e atualiza o `localStorage` no modo local.
+- Totais e filtros são recalculados a partir da lista atualizada.
+- `npm run lint` e `npm run build` passaram após a implementação.
+
 ## Ajuste do reconhecimento Gemini
 
 - O prompt agora exige portugues do Brasil, rotulos locais de pagamento e data no formato `YYYY-MM-DD`.
