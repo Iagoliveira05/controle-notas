@@ -92,7 +92,7 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 - Categoria e forma de pagamento são normalizadas contra as opções disponíveis, incluindo cartão de débito e combustível.
 - Datas em `DD/MM/AAAA`, `DD-MM-AAAA` e `AAAA-MM-DD` são convertidas para o formato aceito pelo campo de data e validadas como datas reais.
 - `npm run lint` e `npm run build` passaram após a correção.
-- O commit anterior havia sido enviado antes da validação final e o deploy correspondente falhou no TypeScript; esta correção será publicada após o commit atual.
+- O commit anterior havia sido enviado antes da validação final e o deploy correspondente falhou no TypeScript; a correção foi publicada no commit `a9d8893` e no alias de produção da Vercel.
 
 - A foto selecionada é descartada ao fechar o formulário; ela ainda não é salva.
 - `capture="environment"` depende do navegador e do dispositivo; em desktop normalmente abre o seletor de arquivos.
