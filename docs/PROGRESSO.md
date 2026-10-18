@@ -86,6 +86,12 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Correção de layout e planejamento
+
+- Corrigido overflow horizontal causado pela combinação de sidebar fixa e conteúdo flexível.
+- A barra lateral agora tem altura limitada à viewport e rolagem própria; a página principal não desloca a sidebar junto.
+- `PLANEJAMENTO.md` foi reorganizado e atualizado para refletir a Fase 4 e as pendências reais.
+
 ## T042/T043 — historico e filtros
 
 - O historico agora filtra por data inicial, data final, categoria, forma de pagamento e texto.

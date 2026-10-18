@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import "./App.css";
 import "./auth.css";
+import "./layout-fixes.css";
 import { categories, paymentMethods } from "./data/categories";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";

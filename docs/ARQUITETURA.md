@@ -108,6 +108,7 @@ Avaliar nesta ordem:
 Não usar `localStorage` como substituto silencioso da nuvem. Se houver modo de demonstração local, identificá-lo claramente.
 
 ## 9. Qualidade
+- O layout usa um container flex com `min-width: 0`; a barra lateral permanece em viewport própria (`position: sticky`) e o conteúdo controla o overflow horizontal.
 - O historico aplica filtros locais por texto, categoria, forma de pagamento e intervalo civil `YYYY-MM-DD`, evitando consultas extras ao Firestore.
 - Validar antes de persistir.
 - Tratar falhas de rede e permissão.
