@@ -4,6 +4,7 @@ import type { Expense } from '../types/expense'
 import { validateExpense } from '../utils/validators'
 import { recognizeReceipt } from '../services/ocrService'
 import { parseReceiptText, type ReceiptSuggestions } from '../services/receiptParser'
+import './expense-form.css'
 
 type Props = { onSave: (expense: Omit<Expense, 'id'>) => void; onClose: () => void }
 

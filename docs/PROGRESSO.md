@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-O projeto está na transição da Fase 2 para a Fase 3. A aplicação possui interface responsiva, cadastro manual, filtros, exclusão local, seleção de imagem/câmera e OCR local com texto revisável.
+O projeto está na transição da Fase 2 para a Fase 3. A aplicação possui interface responsiva, cadastro manual, filtros, exclusão local, seleção de imagem/câmera e OCR local com pré-processamento e texto revisável.
 
 O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usuário e regras publicadas foram implementados. O OCR local usa Tesseract.js; interpretação automática de campos ainda não foi implementada.
 
@@ -34,9 +34,10 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Configuração Web aplicada localmente e na produção Vercel; nenhum segredo administrativo foi usado.
 - Login e cadastro por e-mail/senha em `src/components/AuthForm.tsx`.
 - Gastos autenticados persistidos em `users/{uid}/expenses`, com `amountCents`.
-- OCR local com Tesseract.js em `src/services/ocrService.ts`, com progresso e texto revisável.
+- OCR local com Tesseract.js em `src/services/ocrService.ts`, com progresso, ampliação, escala de cinza e contraste.
 - Interpretador heurístico em `src/services/receiptParser.ts` para total, data e primeira linha provável do estabelecimento.
 - Ação explícita para aplicar sugestões ao formulário, mantendo todos os campos editáveis.
+- Modal de cadastro reorganizado para telas pequenas e grandes, com prévia e bloco visual de sugestões.
 
 ## Tarefas pendentes principais
 
@@ -46,6 +47,7 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Migrar valores para centavos inteiros.
 - Interpretar valores e datas brasileiras sem assumir que o maior número é o total.
 - Testar o interpretador com comprovantes reais e variados; a heurística permanece sujeita a revisão manual.
+- Ajustar o OCR para layouts específicos após coletar exemplos reais de comprovantes, sem enviar imagens para serviços externos.
 - Revisar e salvar os campos extraídos pelo OCR.
 - Implementar cartões, ciclos de fatura, edição de gastos e filtros completos.
 - Criar testes unitários e de interface.
@@ -63,6 +65,7 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 | `npx vercel --prod` | Nova versão com variáveis Firebase de produção publicada; alias preservado. |
 | `npm run lint` | Passou após a implementação de autenticação e persistência. |
 | `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |
+| `npm run lint` | Passou após o pré-processamento de imagem e melhoria visual do formulário. |
 | `npx firebase-tools deploy --only firestore:rules --project ontrole-db60e` | Regras compiladas e publicadas com sucesso em `cloud.firestore`. |
 | `npm run lint` | Passou após o interpretador OCR e revisão de sugestões. |
 | `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |

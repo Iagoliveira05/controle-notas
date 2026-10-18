@@ -112,7 +112,7 @@ Categorias iniciais: Alimentação, Mercado, Transporte, Combustível, Saúde, E
 
 - [ ] Cadastro manual de gastos funciona.
 - [x] Imagem pode ser selecionada e visualizada.
-- [ ] OCR é executado localmente e não depende de API paga.
+- [x] OCR é executado localmente e não depende de API paga.
 - [ ] Dados extraídos podem ser revisados e corrigidos.
 - [ ] Gastos podem ser editados e excluídos.
 - [ ] Totais refletem as alterações.
