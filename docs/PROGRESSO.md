@@ -86,6 +86,14 @@ Configurar a conexão segura com o Firebase criado pelo responsável, sem adicio
 
 ## Riscos e limites conhecidos
 
+## Atualização da etapa atual — 18/10/2026
+
+- O reconhecimento do Gemini agora aplica automaticamente os campos reconhecidos ao formulário.
+- Categoria e forma de pagamento são normalizadas contra as opções disponíveis, incluindo cartão de débito e combustível.
+- Datas em `DD/MM/AAAA`, `DD-MM-AAAA` e `AAAA-MM-DD` são convertidas para o formato aceito pelo campo de data e validadas como datas reais.
+- `npm run lint` e `npm run build` passaram após a correção.
+- O commit anterior havia sido enviado antes da validação final e o deploy correspondente falhou no TypeScript; esta correção será publicada após o commit atual.
+
 - A foto selecionada é descartada ao fechar o formulário; ela ainda não é salva.
 - `capture="environment"` depende do navegador e do dispositivo; em desktop normalmente abre o seletor de arquivos.
 - O Firebase criado no console não significa que a aplicação já está conectada.

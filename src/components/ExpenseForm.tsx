@@ -33,15 +33,16 @@ export function ExpenseForm({ onSave, onClose }: Props) {
     void analyze(file)
   }
 
-  function applyResult(analysis = result) {
-    if (!analysis || !formRef.current) return
+  function applyResult(analysis?: GeminiReceiptResult | FormEvent<HTMLButtonElement> | null) {
+    const data = analysis && 'currentTarget' in analysis ? result : analysis ?? result
+    if (!data || !formRef.current) return
     const elements = formRef.current.elements
-    if (analysis.description) (elements.namedItem('description') as HTMLInputElement).value = analysis.description
-    if (analysis.amount !== null && analysis.amount !== undefined) (elements.namedItem('amount') as HTMLInputElement).value = analysis.amount.toFixed(2)
-    const date = normalizeDate(analysis.purchaseDate)
+    if (data.description) (elements.namedItem('description') as HTMLInputElement).value = data.description
+    if (data.amount !== null && data.amount !== undefined) (elements.namedItem('amount') as HTMLInputElement).value = data.amount.toFixed(2)
+    const date = normalizeDate(data.purchaseDate)
     if (date) (elements.namedItem('date') as HTMLInputElement).value = date
-    const category = findOption(categories, analysis.category)
-    const payment = findPaymentOption(analysis.paymentMethod)
+    const category = findOption(categories, data.category)
+    const payment = findPaymentOption(data.paymentMethod)
     if (category) (elements.namedItem('category') as HTMLSelectElement).value = category
     if (payment) (elements.namedItem('payment') as HTMLSelectElement).value = payment
   }
@@ -67,7 +68,7 @@ export function ExpenseForm({ onSave, onClose }: Props) {
   function normalizeDate(value?: string | null) {
     if (!value) return undefined
     if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
-    const match = value.match(/^(\d{2})[\/-](\d{2})[\/-](\d{2,4})$/)
+    const match = value.match(/^(\d{2})[-/](\d{2})[-/](\d{2,4})$/)
     if (!match) return undefined
     const year = match[3].length === 2 ? `20${match[3]}` : match[3]
     const date = `${year}-${match[2]}-${match[1]}`
