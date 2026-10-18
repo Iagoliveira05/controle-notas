@@ -35,6 +35,8 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Login e cadastro por e-mail/senha em `src/components/AuthForm.tsx`.
 - Gastos autenticados persistidos em `users/{uid}/expenses`, com `amountCents`.
 - OCR local com Tesseract.js em `src/services/ocrService.ts`, com progresso e texto revisável.
+- Interpretador heurístico em `src/services/receiptParser.ts` para total, data e primeira linha provável do estabelecimento.
+- Ação explícita para aplicar sugestões ao formulário, mantendo todos os campos editáveis.
 
 ## Tarefas pendentes principais
 
@@ -43,6 +45,7 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 - Criar regras Firestore que isolem os dados por usuário.
 - Migrar valores para centavos inteiros.
 - Interpretar valores e datas brasileiras sem assumir que o maior número é o total.
+- Testar o interpretador com comprovantes reais e variados; a heurística permanece sujeita a revisão manual.
 - Revisar e salvar os campos extraídos pelo OCR.
 - Implementar cartões, ciclos de fatura, edição de gastos e filtros completos.
 - Criar testes unitários e de interface.
@@ -61,6 +64,8 @@ O SDK Firebase, autenticação por e-mail/senha, persistência Firestore por usu
 | `npm run lint` | Passou após a implementação de autenticação e persistência. |
 | `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |
 | `npx firebase-tools deploy --only firestore:rules --project ontrole-db60e` | Regras compiladas e publicadas com sucesso em `cloud.firestore`. |
+| `npm run lint` | Passou após o interpretador OCR e revisão de sugestões. |
+| `npm run build` | Passou; o Vite emitiu aviso de chunk acima de 500 kB. |
 
 ## Publicação
 
